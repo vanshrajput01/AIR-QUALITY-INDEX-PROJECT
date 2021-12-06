@@ -1,0 +1,64 @@
+import json
+import tkinter as tk
+import requests 
+ 
+
+def getapi(root_val):
+    city = textField.get()
+    apicity = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=06c921750b9a82d8f5d1294e1586276f"
+    
+    json_dataCity = requests.get(apicity).json()
+    getlong=json_dataCity['coord']['lon']
+    getlat=json_dataCity['coord']['lat']
+    apiaqi="https://api.openweathermap.org/data/2.5/air_pollution?lat="+str(getlat)+"&lon="+str(getlong)+"&appid=f933656ce83dd109793ccd42921b2e92"
+    json_data = requests.get(apiaqi).json()
+    condition = json_data['list'][0]['components']
+    co = condition['co'] 
+    no = condition['no'] 
+    no2 = condition['no2'] 
+    o3 = condition['o3'] 
+    so2 = condition['so2'] 
+    pm2_5 = condition['pm2_5'] 
+    pm10 = condition['pm10'] 
+    nh3 = condition['nh3']
+    # cloud_info="test"
+    if pm2_5>=0 and pm2_5<=50:
+        cloud_info="Air Quality Index is Good"
+    elif pm2_5>=51 and pm2_5<=101:
+        cloud_info="Air Quality Index is Moderate"
+    elif pm2_5>=101 and pm2_5<=150:
+        cloud_info="Air Quality Index is unhealthy for sensitive groups"
+    elif pm2_5>=151 and pm2_5<=200:
+        cloud_info="Air Quality Index is unhealthy"
+    elif pm2_5>=201 and pm2_5<=300:
+        cloud_info="Air Quality Index is Very unhealthy"
+    elif pm2_5>=301 and pm2_5<=800:
+        cloud_info="Air Quality Index is Hazardous"
+        
+    
+    cityName="\n" 
+    final_info = "City Name: " + city + "" + "\n" 
+    final_data =  "\n"+ " Carbon Monoxide (CO): " + str(co) + "" + "\n" + "Nitrogen Oxide(no): " + str(no) + "" +"\n" + "Nitrogen Dioxide(No2): " + str(no2) + "\n" +"Ozone(O3): " + str(o3) + "\n" +"Sulfur Dioxide(So2): " + str(so2) + "\n" + "PM2.5: " + str(pm2_5) + "\n" + "PM10: " + str(pm10) + "\n" + "Ammonia(nh3): " + str(nh3)
+    label1.config(text = final_info)
+    label2.config(text = cloud_info)
+    label3.config(text = final_data)
+    
+root_val = tk.Tk()
+root_val.geometry("600x500")
+root_val.title("AQI App")
+f = ("poppins", 15, "bold")
+t = ("poppins", 25, "bold")
+label4 = tk.Label(root_val, text="Enter City Name:")
+label4.pack(pady = 20)
+textField = tk.Entry(root_val, justify='center', width = 20, font = t)
+textField.pack(pady = 20)
+textField.focus()
+textField.bind('<Return>', getapi)
+
+label1 = tk.Label(root_val, font=t)
+label1.pack()
+label2 = tk.Label(root_val, font=f)
+label2.pack()
+label3 = tk.Label(root_val, font=f)
+label3.pack()
+root_val.mainloop()
